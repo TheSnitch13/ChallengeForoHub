@@ -1,5 +1,3 @@
-Perfecto. Te dejo un README profesional listo para tu repositorio de GitHub. Solo puedes copiarlo y pegarlo en tu archivo README.md.
-
 ForoHub API
 
 API REST desarrollada con Spring Boot para la gestión de tópicos de un foro.
