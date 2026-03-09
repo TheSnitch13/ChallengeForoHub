@@ -84,4 +84,11 @@ public class Topico {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public void actualizarDatos(DatosActualizarTopico datos, Usuario autor, Curso curso) {
+        this.titulo = datos.titulo();
+        this.mensaje = datos.mensaje();
+        this.autor = autor;
+        this.curso = curso;
+    }
 }

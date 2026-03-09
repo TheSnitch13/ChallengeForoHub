@@ -2,10 +2,7 @@ package com.snitch.forohub.controller;
 
 import com.snitch.forohub.domain.curso.Curso;
 import com.snitch.forohub.domain.curso.CursoRepository;
-import com.snitch.forohub.domain.topico.DatosListadoTopico;
-import com.snitch.forohub.domain.topico.DatosRegistroTopico;
-import com.snitch.forohub.domain.topico.Topico;
-import com.snitch.forohub.domain.topico.TopicoRepository;
+import com.snitch.forohub.domain.topico.*;
 import com.snitch.forohub.domain.usuario.Usuario;
 import com.snitch.forohub.domain.usuario.UsuarioRepository;
 import jakarta.validation.Valid;
@@ -14,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/topicos")
@@ -72,5 +70,42 @@ public class TopicoController {
 
         var topico = topicoOptional.get();
         return ResponseEntity.ok(new DatosListadoTopico(topico));
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<String> actualizar(@PathVariable Long id,
+                                             @RequestBody @Valid DatosActualizarTopico datos) {
+
+        var topicoOptional = topicoRepository.findById(id);
+
+        if (topicoOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (topicoRepository.existsByTituloAndMensajeAndIdNot(datos.titulo(), datos.mensaje(), id)) {
+            return ResponseEntity.badRequest().body("Ya existe un tópico con el mismo título y mensaje");
+        }
+
+        Usuario autor = usuarioRepository.getReferenceById(datos.autorId());
+        Curso curso = cursoRepository.getReferenceById(datos.cursoId());
+
+        Topico topico = topicoOptional.get();
+        topico.actualizarDatos(datos, autor, curso);
+
+        return ResponseEntity.ok("Tópico actualizado correctamente");
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        var topicoOptional = topicoRepository.findById(id);
+
+        if (topicoOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        topicoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
