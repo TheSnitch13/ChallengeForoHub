@@ -212,7 +212,7 @@ forohub
 
 # Autor
 
-Proyecto desarrollado por **Alan**
+Proyecto desarrollado por **Snitch**
 como parte del programa **Oracle Next Education + Alura Latam**.
 
 ---
